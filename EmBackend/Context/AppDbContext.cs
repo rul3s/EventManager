@@ -9,6 +9,6 @@ namespace EmBackend.Context
         {
         }
 
-        DbSet<Event> Events { get; set; }
+        public DbSet<Event> Events { get; set; }
     }
 }
