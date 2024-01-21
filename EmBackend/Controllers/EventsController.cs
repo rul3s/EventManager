@@ -15,6 +15,7 @@ namespace EmBackend.Controllers
     public class EventsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly string _uploadFolder = "uploaded";
 
         public EventsController(AppDbContext context)
         {
@@ -76,12 +77,35 @@ namespace EmBackend.Controllers
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Event>> PostEvent(Event @event)
+        public async Task<ActionResult<Event>> PostEvent(Event @event, [FromForm] IFormFile image)
         {
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetEvent", new { id = @event.Id }, @event);
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile image)
+        {
+            if (image != null && image.Length > 0)
+            {
+                // Generate a unique file name for the image
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+
+                // Combine the file path
+                var filePath = Path.Combine(_uploadFolder, fileName);
+
+                // Save the image to the specified folder
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+
+                return CreatedAtAction("Uploaded Image", fileName);
+            }
+
+            return BadRequest("Error uploading image");
         }
 
         // DELETE: api/Events/5
