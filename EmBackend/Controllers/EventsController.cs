@@ -77,7 +77,7 @@ namespace EmBackend.Controllers
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Event>> PostEvent(Event @event, [FromForm] IFormFile image)
+        public async Task<ActionResult<Event>> PostEvent(Event @event)
         {
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
