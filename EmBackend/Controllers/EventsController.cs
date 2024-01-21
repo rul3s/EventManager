@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EmBackend.Context;
 using EmBackend.Entities;
+using EmBackend.Utils;
 
 namespace EmBackend.Controllers
 {
@@ -54,6 +55,7 @@ namespace EmBackend.Controllers
             }
 
             _context.Entry(@event).State = EntityState.Modified;
+            _context.Events.Single(e => e.Id == id).UpdatedAt = DateTime.Now.Truncate(TimeSpan.TicksPerSecond);
 
             try
             {
@@ -71,7 +73,7 @@ namespace EmBackend.Controllers
                 }
             }
 
-            return NoContent();
+            return Accepted(@event);
         }
 
         // POST: api/Events
